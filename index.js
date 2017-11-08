@@ -21,6 +21,7 @@ function RadioSwitch(log, config) {
 	}
 
 	rcswitch.enableTransmit(config.pin || 0);
+	rcswitch.setPulseLength(config.nPulseLength || 300);
 
 	var switchOn = rcswitch.switchOn.bind(rcswitch, config.systemcode, config.unitcode);
 	var switchOff = rcswitch.switchOff.bind(rcswitch, config.systemcode, config.unitcode);
