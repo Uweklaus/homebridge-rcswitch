@@ -6,7 +6,7 @@ Add support for rc switches using [rcswitch](https://github.com/marvinroger/node
 
 1. Install [WiringPi](https://projects.drogon.net/raspberry-pi/wiringpi/download-and-install/)
 2. Install homebridge using: `npm install -g homebridge`
-3. Install this plugin using: `npm install -g homebridge-rcswitch`
+3. Install this plugin using: `npm install -g homebridge-rcswitch-pulselength`
 4. Update your configuration file.
 
 # Configuration

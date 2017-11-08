@@ -6,7 +6,7 @@ var Characteristic;
 module.exports = function (homebridge) {
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
-	homebridge.registerAccessory('homebridge-rcswitch', 'RcSwitch', RadioSwitch);
+	homebridge.registerAccessory('homebridge-rcswitch-pulselength', 'RcSwitch', RadioSwitch);
 };
 
 function RadioSwitch(log, config) {
@@ -30,8 +30,8 @@ function RadioSwitch(log, config) {
 
 	informationService
 		.setCharacteristic(Characteristic.Name, 'Raspberry-Projekt')
-		.setCharacteristic(Characteristic.Manufacturer, 'JadeHochschule')
-		.setCharacteristic(Characteristic.Model, 'v0.1')
+		.setCharacteristic(Characteristic.Manufacturer, 'Uwe Klaus')
+		.setCharacteristic(Characteristic.Model, 'v0.11')
 		.setCharacteristic(Characteristic.SerialNumber, config.systemcode + '|' + config.unitcode);
 
 	var state = false;
