@@ -1,65 +1,99 @@
-var rcswitch = require('rcswitch');
+const rpi433    = require('rpi-433');
+const rfEmitter = rpi433.emitter({pin: 0, pulseLength: 250});
 
-var Service;
-var Characteristic;
+let Service;
+let Characteristic;
 
-module.exports = function (homebridge) {
-	Service = homebridge.hap.Service;
-	Characteristic = homebridge.hap.Characteristic;
-	homebridge.registerAccessory('homebridge-rcswitch-pulselength', 'RcSwitch', RadioSwitch);
+// command queue
+let todoList = [];
+let timer    = null;
+let timeout  = 200; // timeout between sending rc commands (in ms)
+
+module.exports = (homebridge) => {
+  Service = homebridge.hap.Service;
+  Characteristic = homebridge.hap.Characteristic;
+  homebridge.registerAccessory('homebridge-rcswitch-pulselength', 'RCSwitchP', RCSwitchP);
 };
 
-function RadioSwitch(log, config) {
-	if (config.systemcode === undefined) {
-		return log('Systemcode missing from configuration.');
-	}
-	if (config.unitcode	=== undefined) {
-		return log('Unitcode missing from configuration.');
-	}
-	if (config.name	=== undefined) {
-		return log('Name missing from configuration.');
-	}
+class RCSwitchP {
+  constructor(log, config) {
 
-	rcswitch.enableTransmit(config.pin || 0);
-	RCSwitch.setPulseLength(config.nPulseLength || 300);
+    // config
+    this.name = config['name'];
+    this.id = config['id'];
+    this.pulse = config['pulse'];
+    this.signalOn = config['on'];
+    this.signalOff = config['off'];
 
-	var switchOn = rcswitch.switchOn.bind(rcswitch, config.systemcode, config.unitcode);
-	var switchOff = rcswitch.switchOff.bind(rcswitch, config.systemcode, config.unitcode);
+    // setup
+    this.log = log;
+    this.service = new Service.Switch(this.name);
+    this.setupRcSwitchService(this.service);
 
-	var informationService = new Service.AccessoryInformation();
+    // information service
+    this.informationService = new Service.AccessoryInformation();
+    this.informationService
+      .setCharacteristic(Characteristic.Name, 'RCSwitchP')
+      .setCharacteristic(Characteristic.Manufacturer, 'CN')
+      .setCharacteristic(Characteristic.Model, 'Etekcity ' + this.name)
+      .setCharacteristic(Characteristic.SerialNumber, '1337-' + this.id);
 
-	informationService
-		.setCharacteristic(Characteristic.Name, 'Raspberry-Projekt')
-		.setCharacteristic(Characteristic.Manufacturer, 'Uwe Klaus')
-		.setCharacteristic(Characteristic.Model, 'v0.11')
-		.setCharacteristic(Characteristic.SerialNumber, config.systemcode + '|' + config.unitcode);
+  }
 
-	var state = false;
-	var switchService = new Service.Switch(config.name);
+  getServices() {
+    return [this.informationService, this.service];
+  }
 
-	switchService
-	.getCharacteristic(Characteristic.On)
-	.on('set', function (value, callback) {
-		state = value;
-		if (state) {
-			switchOn();
-		} else {
-			switchOff();
-		}
-		callback();
-	});
+  setupRcSwitchService(service) {
+    let state = false;
 
-	switchService
-	.getCharacteristic(Characteristic.On)
-	.on('get', function (callback) {
-		callback(null, state);
-	});
+    service
+      .getCharacteristic(Characteristic.On)
+      .on('set', (value, callback) => {
+        state = value;
+        let signal;
+        if(state) {
+          signal = this.signalOn;
+        } else {
+          signal = this.signalOff;
+        }
+        todoList.push({
+          'signal': signal,
+          'callback': callback
+        });
+        if (timer === null) {
+          timer = setTimeout(this.toggleNext, timeout, this);
+        }
+      });
 
-	this.services = [informationService, switchService];
+    service
+      .getCharacteristic(Characteristic.On)
+      .on('get', (callback) => {
+        callback(null, state);
+      });
+  }
+
+  toggleNext(switchObject) {
+    // get next todo item
+    let todoItem = todoList.shift();
+    let signal = todoItem['signal'];
+    let callback = todoItem['callback'];
+    // send signal
+    rfEmitter.sendCode(signal, function(error, stdout) {
+      if(error) {
+        console.log('error ' + error);
+      } else {
+        console.log('success ' + stdout);
+      };
+    });
+    // set timer for next todo
+    if (todoList.length > 0) {
+      timer = setTimeout(switchObject.toggleNext, timeout, switchObject);
+    } else {
+      timer = null;
+    }
+    // call callback
+    callback();
+  }
+
 }
-
-RadioSwitch.prototype = {
-	getServices: function () {
-		return this.services;
-	}
-};

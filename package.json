@@ -1,33 +1,38 @@
 {
   "name": "homebridge-rcswitch-pulselength",
-  "version": "1.1.1",
-  "license": "MIT",
+  "version": "1.0.6",
+  "description": "A Homebridge plugin for controlling rc 433mhz switches with custom pulse lenght via iOS devices. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Uweklaus/homebridge-rcswitch-pulselength"
+  },
+  "bugs": {
+    "url": "https://github.com/Uweklaus/homebridge-rcswitch-pulselength/issues"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "rpi-433": "^2.1.0",
+    "wiring-pi": "^2.2.0"
+  },
+  "engines": {
+    "node": ">=6.9.2",
+    "homebridge": ">=0.2.0"
+  },
   "keywords": [
     "rcswitch",
     "raspberry",
     "433",
-    "mhz",
-    "gpio",
-    "wiringPi",
     "pi",
     "siri",
     "homebridge",
-    "homebridge-plugin"
+    "homebridge-plugin",
+    "ios",
+    "homekit"
   ],
-  "engines": {
-    "node": ">=0.12.0",
-    "homebridge": ">=0.2.0"
-  },
-  "dependencies": {
-    "rcswitch": "^0.2.3"
-  },
-  "devDependencies": {
-    "xo": "^0.12.0"
-  },
-  "xo": {
-    "esnext": false,
-    "envs" :[
-      "node"
-    ]
-  }
+  "author": "Christopher Neuwirth/Uwe Klaus",
+  "license": "ISC"
 }

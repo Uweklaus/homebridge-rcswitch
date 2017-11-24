@@ -1,6 +1,12 @@
 # homebridge-rcswitch-pulselength
 
-Add support for rc switches using [rcswitch](https://github.com/marvinroger/node-rcswitch)
+The plugin is based on the idea of [FWeinb's rcswitch](https://github.com/FWeinb/homebridge-rcswitch) plugin.
+It is written by Christopher Neuwirth, who named it Homebridge RC433 Etekcity plugin (https://github.com/ChristopherNeuwirth/homebridge-rc433-etekcity).
+I bought switches at TOOM and they are manufactured by RWE. Normal rcswitch services were not working or
+not working properly. The pulse length had to be set between 250 and 300 microsec. 350 or higher were not working.
+Now the Etekcity plugin sets the pulse length originally to 188 microsec, which is too short, but as seen inssue no1
+the original let specify a pulse length in the configuration file, but is not using this parameter.
+
 
 # Installation
 
@@ -11,28 +17,28 @@ Add support for rc switches using [rcswitch](https://github.com/marvinroger/node
 
 # Configuration
 
-You can add as many switches as you like. You will need to pass the `name`, `systemcode` and `unitcode`.
-This plugin assumes that you connect the 433Mhz transmitter to GPIO0, this can be changed via the `pin` property. 
-Additional the pulslength of the signal could be changed. If you do not specify it will be set to 300 µs.
+You can add as many switches as you like. You will need to pass the `name`, `id`=unitcode, `pulse` length,
+the `on` and `off` code as decimal string as received by e.g. RFSniffer in the 433Utils.
+This plugin assumes that you connect the 433Mhz transmitter to GPIO0.
 
  ```
  "accessories": [
      {
-       "accessory": "RcSwitch",
-       "name": "Switch One",
-       "systemcode": "11101", 
-       "unitcode": 1,
-       "nPulseLength": 250,
-       "pin": 0
+         "accessory": "RcSwitchP",
+         "name": "Switch One",
+         "id": "01",
+         "pulse": "250",
+         "on": "5566771",
+         "off": "5577660"
      }
 ]
 ```
 # Remarks
 
-I added the pulselength feature into this easygoing plugin, because I bought switches at TOOM and they are manufactured by RWE. 
-These switches have a normal 1..5 and A..E coding, but were not switchable by this programm.
+I added the pulselength feature into this easygoing plugin, because I bought switches at TOOM and they are manufactured by RWE.
+These switches have a normal 1..5 and A..E coding, but were not switchable by rcswitch programm.
 But I was able to switch my Brenstuhl switches with the remote of RWE (after coding), but not vice versa.
 So I tried the platform-rcswitch, but this caused troulbe on my PI3.
 (after changing the config, a restart of the homebridge is not enough, the Pi had to be restarted).
-Nevertheless, it was possible to switch both types using a pulselength of 250 to 300 µs.
+Nevertheless, it was possible to switch both types using a pulselength of 250 to 300 ï¿½s.
 In the original homebridge-rcswitch it was not implemented to configure the pulselength.
