@@ -3,10 +3,10 @@
 The plugin is based on the idea of [FWeinb's rcswitch](https://github.com/FWeinb/homebridge-rcswitch) plugin.
 It is written by Christopher Neuwirth, who named it Homebridge RC433 Etekcity plugin (https://github.com/ChristopherNeuwirth/homebridge-rc433-etekcity).
 I bought switches at TOOM and they are manufactured by RWE. Normal rcswitch services were not working or
-not working properly. The pulse length had to be set between 250 and 300 microsec. 350 or higher were not working.
-Now the Etekcity plugin sets the pulse length originally to 188 microsec, which is too short, but as seen inssue no1
-the original let specify a pulse length in the configuration file, but is not using this parameter.
-
+not working properly. The pulse length had to be set between 250 and 300 microsec. 350 or higher is not working with these RWE switches.
+Now the Etekcity plugin sets the pulse length originally to 188 microsec, which is too short, but as seen in issue no1
+the original should let specify a pulse length in the configuration file, but is not using this parameter.
+*Now you can change the pulse length as well as the RF pin for each switch.*
 
 # Installation
 
@@ -17,17 +17,19 @@ the original let specify a pulse length in the configuration file, but is not us
 
 # Configuration
 
-You can add as many switches as you like. You will need to pass the `name`, `id`=unitcode, `pulse` length,
-the `on` and `off` code as decimal string as received by e.g. RFSniffer in the 433Utils.
-This plugin assumes that you connect the 433Mhz transmitter to GPIO0.
+You can add as many switches as you like. You will need to pass the `name`,
+`id`=unitcode, `pulse` length, `pin` GIO pin of RF module (usual 0),
+the `on` and `off` code as decimal string
+as received by e.g. RFSniffer in the 433Utils.
 
  ```
  "accessories": [
      {
-         "accessory": "RcSwitchP",
+         "accessory": "RCSwitchP",
          "name": "Switch One",
          "id": "01",
          "pulse": "250",
+         "pin": "0",
          "on": "5566771",
          "off": "5577660"
      }

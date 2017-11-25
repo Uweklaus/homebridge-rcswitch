@@ -10,10 +10,11 @@
 
     "accessories": [
         {
-          "accessory": "RC433EtekcitySwitch",
+          "accessory": "RCSwitchP",
           "name": "Switch One",
           "id": "01",
           "pulse": "180",
+          "pin": "0",
           "on": "5566771",
           "off": "5577660"
         }

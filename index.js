@@ -1,5 +1,5 @@
 const rpi433    = require('rpi-433');
-const rfEmitter = rpi433.emitter({pin: 0, pulseLength: 250});
+// const rfemitter = rpi433.emitter({pin: 0, pulseLength: 250})
 
 let Service;
 let Characteristic;
@@ -22,6 +22,7 @@ class RCSwitchP {
     this.name = config['name'];
     this.id = config['id'];
     this.pulse = config['pulse'];
+    this.pin = config['pin'];
     this.signalOn = config['on'];
     this.signalOff = config['off'];
 
@@ -52,6 +53,8 @@ class RCSwitchP {
       .on('set', (value, callback) => {
         state = value;
         let signal;
+        let pulse = this.pulse;
+        let pin = this.pin;
         if(state) {
           signal = this.signalOn;
         } else {
@@ -59,6 +62,8 @@ class RCSwitchP {
         }
         todoList.push({
           'signal': signal,
+          'pulse': pulse,
+          'pin': pin,
           'callback': callback
         });
         if (timer === null) {
@@ -77,9 +82,12 @@ class RCSwitchP {
     // get next todo item
     let todoItem = todoList.shift();
     let signal = todoItem['signal'];
+    let pulse = todoItem['pulse'];
+    let pin = todoItem['pin'];
     let callback = todoItem['callback'];
+    const rfemitter = rpi433.emitter({pin: pin, pulseLength: pulse})
     // send signal
-    rfEmitter.sendCode(signal, function(error, stdout) {
+    rfemitter.sendCode(signal, function(error, stdout) {
       if(error) {
         console.log('error ' + error);
       } else {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+- pulse length and pin in config is now used and no constant
+
+## 1.0.7 ... 1.0.15
+-
+
 ## 1.0.6
 - renamed to homebridge-rcswitch-pulselength
 
